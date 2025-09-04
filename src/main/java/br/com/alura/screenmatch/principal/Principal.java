@@ -37,6 +37,7 @@ public class Principal {
                     6 - Buscar séries por ator
                     7 - Buscar séries por categoria
                     8 - Buscar séries por limite de temporadas
+                    9 - Buscar episódio por trecho do título
                     
                     0 - Sair                                 
                     """;
@@ -69,6 +70,10 @@ public class Principal {
                     break;
                 case 8:
                     buscarSeriesPorTemporadas();
+                    break;
+                case 9:
+                    buscarEpisodioPorTrecho();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -174,12 +179,22 @@ public class Principal {
     private void buscarSeriesPorTemporadas() {
         System.out.println("Digite o limite de temporadas");
         var limiteTemporadas = leitura.nextInt();
+        leitura.nextLine();
         System.out.println("Digite a avaliação mínima");
         var avaliacao = leitura.nextDouble();
-        List<Serie> seriesPorTemporada = repositorio.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(
-                limiteTemporadas, avaliacao
-        );
+        leitura.nextLine();
+        List<Serie> seriesPorTemporada = repositorio.seriesPorTemporadaEAvaliacao(limiteTemporadas, avaliacao);
         System.out.println("Séries com nota " + avaliacao + " ou mais e com " + limiteTemporadas + " ou menos temporadas:");
         seriesPorTemporada.forEach(System.out::println);
+    }
+
+    private void buscarEpisodioPorTrecho() {
+        System.out.println("Digite o nome do episódio para busca");
+        var nomeEpisodio = leitura.nextLine();
+        List<Episodio> episodiosEncontrados = repositorio.episodiosPorTrecho(nomeEpisodio);
+        episodiosEncontrados.forEach(e ->
+                System.out.printf("Série: %s, Temp. %s - Episódio %s - %s\n",
+                        e.getSerie().getTitulo(), e.getTemporada(),
+                        e.getNumeroEpisodio(), e.getTitulo()));
     }
 }
